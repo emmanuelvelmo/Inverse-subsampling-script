@@ -75,7 +75,9 @@ int main()
 
         i++;
     }
-
+    
+    std::cout << "Expanded matrices (ratio 1:1:1)" << std::endl << std::endl;
+    
     for (unsigned short cont_64 = 0; cont_64 < rgb_conv.size() / 64; cont_64++)
     {
         for (unsigned short cont_y = 0; cont_y < 8; cont_y++)
@@ -113,7 +115,64 @@ int main()
             }
         }
     }
+    
+    unsigned short ancho_in = 16;
+    unsigned short alto_in = 16;
+    
+    unsigned short ancho_8;
+    unsigned short alto_8;
 
+    if ((ancho_in / 8) - short(ancho_in / 8) > 0)
+    {
+        ancho_8 = (short(ancho_in / 8) + 1) * 8;
+    }
+    else
+    {
+        ancho_8 = ancho_in;
+    }
+
+    if ((alto_in / 8) - short(alto_in / 8) > 0)
+    {
+        alto_8 = (short(alto_in / 8) + 1) * 8;
+    }
+    else
+    {
+        alto_8 = alto_in;
+    }
+    
+    if (true)
+    {
+        std::vector<float> rgb_conv2 = rgb_conv;
+        unsigned int iter_lin = 0;
+        
+        for(unsigned short cuad_y = 0; cuad_y < alto_8 / 16; cuad_y++)
+        {
+            for(unsigned short cuad_x = 0; cuad_x < ancho_8 / 16; cuad_x++)
+            {
+                for(unsigned short mcu_y = 0; mcu_y < 2; mcu_y++)
+                {
+                    for(unsigned short mcu_x = 0; mcu_x < 2; mcu_x++)
+                    {
+                        for(unsigned short filas_y = 0; filas_y < 8; filas_y++)
+                        {
+                            for(unsigned short columnas_x = 0; columnas_x < 8; columnas_x++)
+                            {
+                                for(unsigned short cont_rgb = 0; cont_rgb < 3; cont_rgb++)
+                                {
+                                    rgb_conv[(cuad_y * (ancho_8 / 16) * 784) + (cuad_x * 48) + (mcu_y * (ancho_8 / 8) * 192) + (mcu_x * 24) + (filas_y * (ancho_8 * 3)) + (columnas_x * 3) + cont_rgb] = rgb_conv2[iter_lin];
+                                    
+                                    iter_lin++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    std::cout << "Reordered pixels" << std::endl << std::endl;
+    
     for (unsigned int iter_conv = 0; iter_conv < rgb_conv.size() / 3; iter_conv++)
     {
         std::cout << "[" << rgb_conv[iter_conv * 3] << ", " << rgb_conv[(iter_conv * 3) + 1] << ", " << rgb_conv[(iter_conv * 3) + 2] << "] ";
